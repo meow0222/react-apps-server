@@ -20,7 +20,7 @@ const { calculateReward, handleBetClick } = require('./my_modules/module-mao.js'
 
 // CORS
 // app.use(cors({
-//     origin: 'http://localhost:8080'
+//     origin: 'http://localhost:5173'
 // }));
 */
 
@@ -41,6 +41,7 @@ app.options('/', (req,res) => {
     res.header('Access-Control-Allow-Methods', 'GET');
     res.header('Access-Control-Allow-Methods', 'POST');
     res.header('Access-Control-Allow-Methods', 'PUT');
+
     res.sendStatus(200);
 });
 
@@ -176,7 +177,7 @@ app.get('/api/todos', async (req, res) => {
     try {
       const todosData = await fs.promises.readFile('./api/todos.json');
       const todos = JSON.parse(todosData);
-      console.log(todos);
+    //   console.log(todos);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.json(todos);
     } catch (error) {
@@ -208,13 +209,75 @@ app.get('/api/todos', async (req, res) => {
       todos.push(newTodo);
     await fs.promises.writeFile('./api/todos.json', JSON.stringify(todos, null, 2));
      
-      res.status(201).json(newTodo);
+      res.status(200).json(newTodo);
     } catch (error) {
       console.error('Error adding new todo:', error);
       res.status(500).json({ error: 'Error adding new todo' });
     }
   });
+
+
+//maya
+// POST for Form Submit
+app.post('/submit', async function(req, res) {
+    const formData = req.body; // リクエストボディからデータを取得
+  
+    try {
+      // JSONファイルから既存のデータを読み込む
+      const existingData = JSON.parse(fs.readFileSync('./data/customerData.json', 'utf8'));
+  
+      // 新しいデータを追加
+      existingData.push(formData);
+  
+      // 更新したデータをJSONファイルに書き込む
+      fs.writeFileSync('./data/customerData.json', JSON.stringify(existingData, null, 2));
+  
+      // レスポンスを送信
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Expose-Headers', 'request-result');
+      res.setHeader('request-result', 'Request ' + req.method + ' was received successfully');
+      res.status(200).send("Data received and saved successfully");
+    } catch (error) {
+      console.log("Error processing data:", error);
+      res.status(500).send("Server Error");
+    }
+  });
+  //これにより、クライアント側のContactForm.jsxからフォームデータがPOSTリクエストとしてサーバーに送信され、/submitエンドポイントで受け取られ、JSONファイルに保存されるようになります。
+  
   
 
+
+  app.post('/api/events', async (req, res) => {
+    const newEvent = req.body;
+    try {
+    console.log(req.body);
+      const evnetData = await fs.promises.readFile('./api/events.json');
+     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+      const events = JSON.parse(evnetData);
+
+      events[0][newEvent.id] = newEvent;
+      console.log("mmmmmmm",events);
+      await fs.promises.writeFile('./api/events.json', JSON.stringify(events));
+     
+      res.status(200).json(newEvent);
+    } catch (error) {
+      console.error('Error adding new events:', error);
+      res.status(500).json({ error: 'Error adding new events' });
+    }
+  });
+  
+  app.get('/api/events', async (req, res) => {
+    try {
+      const eventsData = await fs.promises.readFile('./api/events.json');
+      const events = JSON.parse(eventsData);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.json(events);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      res.status(500).json({ error: 'Error loading events' });
+    }
+  });
+
+  
 
 
