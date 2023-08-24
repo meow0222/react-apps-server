@@ -12,6 +12,7 @@ const textBodyParser = bodyParser.text({
     defaultCharset: 'utf-8'
 });
 
+/*
 // Modules
 const { authenticateUser } = require('./my_modules/login.js');
 const { createDeck, createPlayers } = require('./my_modules/module-hyerim.js');
@@ -21,7 +22,7 @@ const { calculateReward, handleBetClick } = require('./my_modules/module-mao.js'
 // app.use(cors({
 //     origin: 'http://localhost:5173'
 // }));
-
+*/
 
 app.use(cors());
 // var corsOptions = {
@@ -37,9 +38,10 @@ app.use(bodyParser.json());
 app.options('/', (req,res) => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.header('Access-Control-Allow-Headers', 'casino');
-    res.header('Access-Control-Allow-Methods', 'GET, POST');
-    // res.header('Access-Control-Allow-Methods', 'POST');
-    // res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Methods', 'POST');
+    res.header('Access-Control-Allow-Methods', 'PUT');
+
     res.sendStatus(200);
 });
 
@@ -184,17 +186,18 @@ app.get('/api/todos', async (req, res) => {
     }
   });
   
-  /*
+  
   app.put('/api/todos', async (req, res) => {
     const newTodos = req.body;
     try {
+    await fs.promises.writeFile('./api/todos.json', JSON.stringify(newTodos));
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.json({ message: 'Todos updated successfully' });
     } catch (error) {
       console.error('Error updating todos:', error);
       res.status(500).json({ error: 'Error updating todos' });
     }
-  });*/
+  });
   
   app.post('/api/todos', async (req, res) => {
     const newTodo = req.body;
@@ -203,10 +206,8 @@ app.get('/api/todos', async (req, res) => {
       const todosData = await fs.promises.readFile('./api/todos.json');
      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5174');
       const todos = JSON.parse(todosData);
-
-      todos[0][newTodo.id] = newTodo;
-    //   console.log("mmmmmmm",todos);
-      await fs.promises.writeFile('./api/todos.json', JSON.stringify(todos));
+      todos.push(newTodo);
+    await fs.promises.writeFile('./api/todos.json', JSON.stringify(todos, null, 2));
      
       res.status(200).json(newTodo);
     } catch (error) {
