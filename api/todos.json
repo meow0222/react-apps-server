@@ -1,0 +1,17 @@
+[{
+    "task1": {
+        "id": 1,
+        "title": "learn HTML",
+        "isCompleted":  true
+    },
+    "task2": {
+        "id": 2,
+        "title": "learn CSS",
+        "isCompleted":  true
+    },
+    "task3": {
+        "id": 3,
+        "title": "learn JAVASCRIPT",
+        "isCompleted":  true
+    }
+}]
