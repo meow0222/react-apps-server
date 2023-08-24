@@ -216,6 +216,35 @@ app.get('/api/todos', async (req, res) => {
   });
 
 
+//maya
+// POST for Form Submit
+app.post('/submit', async function(req, res) {
+    const formData = req.body; // リクエストボディからデータを取得
+  
+    try {
+      // JSONファイルから既存のデータを読み込む
+      const existingData = JSON.parse(fs.readFileSync('./data/customerData.json', 'utf8'));
+  
+      // 新しいデータを追加
+      existingData.push(formData);
+  
+      // 更新したデータをJSONファイルに書き込む
+      fs.writeFileSync('./data/customerData.json', JSON.stringify(existingData, null, 2));
+  
+      // レスポンスを送信
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Expose-Headers', 'request-result');
+      res.setHeader('request-result', 'Request ' + req.method + ' was received successfully');
+      res.status(200).send("Data received and saved successfully");
+    } catch (error) {
+      console.log("Error processing data:", error);
+      res.status(500).send("Server Error");
+    }
+  });
+  //これにより、クライアント側のContactForm.jsxからフォームデータがPOSTリクエストとしてサーバーに送信され、/submitエンドポイントで受け取られ、JSONファイルに保存されるようになります。
+  
+  
+
 
   app.post('/api/events', async (req, res) => {
     const newEvent = req.body;
@@ -247,5 +276,7 @@ app.get('/api/todos', async (req, res) => {
       res.status(500).json({ error: 'Error loading events' });
     }
   });
+
+  
 
 
