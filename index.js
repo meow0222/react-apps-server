@@ -19,7 +19,7 @@ const { calculateReward, handleBetClick } = require('./my_modules/module-mao.js'
 
 // CORS
 // app.use(cors({
-//     origin: 'http://localhost:8080'
+//     origin: 'http://localhost:5173'
 // }));
 
 
@@ -37,8 +37,8 @@ app.use(bodyParser.json());
 app.options('/', (req,res) => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.header('Access-Control-Allow-Headers', 'casino');
-    res.header('Access-Control-Allow-Methods', 'GET');
-    res.header('Access-Control-Allow-Methods', 'POST');
+    res.header('Access-Control-Allow-Methods', 'GET, POST');
+    // res.header('Access-Control-Allow-Methods', 'POST');
     // res.header('Access-Control-Allow-Methods', 'GET');
     res.sendStatus(200);
 });
@@ -175,7 +175,7 @@ app.get('/api/todos', async (req, res) => {
     try {
       const todosData = await fs.promises.readFile('./api/todos.json');
       const todos = JSON.parse(todosData);
-      console.log(todos);
+    //   console.log(todos);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.json(todos);
     } catch (error) {
@@ -203,10 +203,12 @@ app.get('/api/todos', async (req, res) => {
       const todosData = await fs.promises.readFile('./api/todos.json');
      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5174');
       const todos = JSON.parse(todosData);
-      todos.push(newTodo);
-    //   await fs.promises.writeFile('./api/todos.json', JSON.stringify(todos));
+
+      todos[0][newTodo.id] = newTodo;
+    //   console.log("mmmmmmm",todos);
+      await fs.promises.writeFile('./api/todos.json', JSON.stringify(todos));
      
-      res.status(201).json(newTodo);
+      res.status(200).json(newTodo);
     } catch (error) {
       console.error('Error adding new todo:', error);
       res.status(500).json({ error: 'Error adding new todo' });
@@ -243,5 +245,38 @@ app.post('/submit', async function(req, res) {
   
   
 
+
+  app.post('/api/events', async (req, res) => {
+    const newEvent = req.body;
+    try {
+    console.log(req.body);
+      const evnetData = await fs.promises.readFile('./api/events.json');
+     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+      const events = JSON.parse(evnetData);
+
+      events[0][newEvent.id] = newEvent;
+      console.log("mmmmmmm",events);
+      await fs.promises.writeFile('./api/events.json', JSON.stringify(events));
+     
+      res.status(200).json(newEvent);
+    } catch (error) {
+      console.error('Error adding new events:', error);
+      res.status(500).json({ error: 'Error adding new events' });
+    }
+  });
+  
+  app.get('/api/events', async (req, res) => {
+    try {
+      const eventsData = await fs.promises.readFile('./api/events.json');
+      const events = JSON.parse(eventsData);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.json(events);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      res.status(500).json({ error: 'Error loading events' });
+    }
+  });
+
+  
 
 
