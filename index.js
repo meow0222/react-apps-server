@@ -223,13 +223,13 @@ app.post('/submit', async function(req, res) {
   
     try {
       // JSONファイルから既存のデータを読み込む
-      const existingData = JSON.parse(fs.readFileSync('./data/customerData.json', 'utf8'));
+      const existingData = JSON.parse(await fs.promises.readFile('./data/customerData.json', 'utf8'));
   
       // 新しいデータを追加
-      existingData.push(formData);
+      existingData[0][formData.name] = formData;
   
       // 更新したデータをJSONファイルに書き込む
-      fs.writeFileSync('./data/customerData.json', JSON.stringify(existingData, null, 2));
+      await fs.promises.writeFile('./data/customerData.json', JSON.stringify(existingData));
   
       // レスポンスを送信
       res.setHeader('Access-Control-Allow-Origin', '*');
